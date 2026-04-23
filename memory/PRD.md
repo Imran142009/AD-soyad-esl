@@ -18,7 +18,7 @@ Build a production-ready, real-time multiplayer word game based on the Azerbaija
 - Fonts: Cabinet Grotesk (display), Outfit (body), JetBrains Mono (mono).
 
 ## What's been implemented (2026-02-23)
-- Emergent Google Auth: `/api/auth/session`, `/api/auth/me`, `/api/auth/logout`. Cookie-based with Bearer fallback.
+- Emergent Google Auth: `/api/auth/session`, `/api/auth/me`, `/api/auth/logout`. Cookie-based with Bearer fallback. Response body now also includes `session_token` (for mobile app).
 - First user auto-promoted to admin; `ADMIN_EMAILS` env also grants admin.
 - Rooms: `POST /api/rooms`, `GET /api/rooms/public`, `GET /api/rooms/{code}`.
 - Game WebSocket: join/leave, chat, settings (host), start_round, submit_word, stop, vote, finalize_round (host), next_round (host), end_game (host), reconnect with 60s grace for empty rooms.
@@ -28,6 +28,7 @@ Build a production-ready, real-time multiplayer word game based on the Azerbaija
 - Admin: users ban/mute, dictionary CRUD (`/api/admin/*`).
 - Frontend pages: Landing (hero + marquee + CTA), Lobby (bento create/join + public rooms), Game Room (live grid, STOP!, voting, results, final scores, chat), Leaderboard (tabs), Profile (stats + history), Admin (users table + dictionary).
 - Tested: 26/26 backend pytest cases pass (including full 2-player WS flow).
+- **Mobile app (Expo SDK 52) at `/app/mobile/`**: Login (Google Auth via Expo WebBrowser + deep link), Lobby, Game Room (full WS flow, timer, voting, results), Leaderboard (tabs), Profile. Shares same backend. Run with `yarn start:tunnel` inside `/app/mobile` and scan QR with Expo Go.
 
 ## Next action items (backlog)
 - **P1**: Add optional LLM-backed dictionary fallback when votes are insufficient (Claude Sonnet 4.5 via Emergent key).

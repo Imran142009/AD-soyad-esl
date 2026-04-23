@@ -159,7 +159,7 @@ async def auth_session(request: Request, response: Response):
         path="/",
     )
     user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-    return {"user": user}
+    return {"user": user, "session_token": session_token}
 
 
 @api.get("/auth/me")

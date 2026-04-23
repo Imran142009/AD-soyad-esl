@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Ad Soyad Şəhər",
+    "slug": "adsoyad",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "adsoyad",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0B0E14"
+    },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "app.emergent.adsoyad" },
+    "android": {
+      "package": "app.emergent.adsoyad",
+      "adaptiveIcon": { "backgroundColor": "#0B0E14" }
+    },
+    "web": { "bundler": "metro" },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "router": { "origin": false }
+    }
+  }
+}
