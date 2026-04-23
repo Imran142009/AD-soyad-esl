@@ -1,0 +1,109 @@
+{
+  "theme": "Dark",
+  "archetype": "5 (Jewel & Luxury) blended with 3 (Pastel & Soft) - Neon-lite Glassmorphism",
+  "typography": {
+    "headings": {
+      "font_family": "Cabinet Grotesk, sans-serif",
+      "weight": "font-black or font-light (radical contrast)",
+      "letter_spacing": "tracking-tighter",
+      "rules": "Never use Inter for headings. Keep H1 to text-5xl/6xl max."
+    },
+    "body": {
+      "font_family": "Outfit, sans-serif",
+      "weight": "font-normal to font-medium",
+      "letter_spacing": "tracking-normal",
+      "rules": "Left-aligned for paragraphs and data grids."
+    },
+    "mono": {
+      "font_family": "JetBrains Mono, monospace",
+      "usage": "Room IDs, Game scores, Timers, 'Ad, Soyad...' categories."
+    }
+  },
+  "colors": {
+    "background": {
+      "primary": "#0B0E14",
+      "secondary": "#11151F",
+      "glass": "bg-white/5"
+    },
+    "surface": {
+      "glass": "bg-white/10 backdrop-blur-2xl backdrop-saturate-150 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]",
+      "card": "bg-[#181D29] border border-white/5",
+      "input": "bg-black/40 border border-white/10 text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+    },
+    "brand": {
+      "primary": "#818CF8",
+      "secondary": "#A78BFA",
+      "accent_pastel": ["#FCA5A5", "#86EFAC", "#93C5FD", "#FDBA74", "#D8B4FE"],
+      "success": "#34D399",
+      "error": "#F87171",
+      "warning": "#FBBF24"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#9CA3AF",
+      "muted": "#6B7280",
+      "neon_glow": "drop-shadow-[0_0_8px_rgba(129,140,248,0.6)]"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "p-2, p-4, p-6, p-8, p-12",
+    "container": "Generous spacing. Mobile-first constraints.",
+    "grids": "Bento Grid protocol Mode B ('Control Room') for Game Room & Admin Dashboard. Mode A ('Tetris') for Landing/Lobby.",
+    "radius": "rounded-2xl for main cards, rounded-full for pills and buttons.",
+    "rules": "Inner padding must prevent text collision (p-6 or p-8 for glass panels). Max-h-[80vh] for any images on mobile."
+  },
+  "motion": {
+    "hover": "hover:-translate-y-1 hover:shadow-[0_8px_30px_rgba(129,140,248,0.2)] transition-all duration-300 ease-out",
+    "active": "active:scale-95",
+    "page_transition": "Framer motion staggered fade-in, y: 20 to 0.",
+    "microinteractions": "Score additions (+10, +5) float up and fade out. Timer pulses red when <10s."
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-indigo-500 hover:bg-indigo-400 text-white rounded-full font-bold tracking-wide transition-all shadow-[0_0_15px_rgba(99,102,241,0.4)]",
+      "glass": "bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 text-white rounded-full transition-all"
+    },
+    "cards": {
+      "glass_card": "bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8"
+    },
+    "inputs": {
+      "text": "bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all"
+    },
+    "shadcn_customizations": {
+      "dialog": "Dark glassmorphic overlay (bg-black/60 backdrop-blur-sm), modal body bg-[#0B0E14] border-white/10",
+      "tabs": "bg-black/40 border-white/10, active tab bg-white/10 text-indigo-300",
+      "table": "bg-transparent, row border-b border-white/5, hover bg-white/5"
+    }
+  },
+  "media_and_assets": {
+    "icons": "lucide-react (default) with thin stroke-width (1.5)",
+    "images": [
+      {
+        "category": "hero_background",
+        "url": "https://static.prod-images.emergentagent.com/jobs/6fcc6400-d2ef-4e71-85ab-912d845dbb57/images/83d93760408621f09aa778a330ea65d446cc5cf31981b1f04dce6e016603f885.png",
+        "description": "Abstract dark blue glass liquid wave for landing page background, positioned with absolute inset-0 -z-10 object-cover opacity-60 mix-blend-screen"
+      },
+      {
+        "category": "hero_illustration",
+        "url": "https://static.prod-images.emergentagent.com/jobs/6fcc6400-d2ef-4e71-85ab-912d845dbb57/images/325de1d2c0d55fda4115a424b026e403eb6d8e2da993f0e1e25e9f3326a53246.png",
+        "description": "Neon letter A in a frosted cube, use in hero or lobby as decorative element"
+      },
+      {
+        "category": "social_proof",
+        "url": "https://images.pexels.com/photos/9071723/pexels-photo-9071723.jpeg",
+        "description": "Friends playing games on phone, use in 'How to Play' or About section"
+      }
+    ]
+  },
+  "views_and_features": {
+    "landing": "Hero section with absolute background image, massive Cabinet Grotesk H1 with tracking-tighter, neon-glowing CTA button, Google Sign-In minimal button. Subtle marquee of categories 'Ad, Soyad, Şəhər, Ölkə, Bitki...'.",
+    "lobby": "Glassmorphism bento grid. Left side: User profile summary. Right side: Two big action blocks (Create Private Room / Join Public). Room code uses JetBrains Mono tracking-widest.",
+    "game_room": "Intense but clean interface. Timer top center (JetBrains Mono). Dynamic grid for inputs (mobile-optimized stack). Real-time synchronized state. Submitting a word locks the input field with a checkmark. Voting phase swaps input grid to a Tinder-style swipe/approve list of submitted words.",
+    "leaderboard": "Shadcn Tabs (Daily/Weekly/All-time). Table format with frosted glass rows. Top 3 rows have pastel glows (Gold, Silver, Bronze equivalents in pastel tones).",
+    "admin_dashboard": "Strict Mode B Control Room grid. Sidebar nav. Dense data tables for moderation. bg-[#0B0E14] without heavy glassmorphism for better performance and readability."
+  },
+  "testing": {
+    "rules": "All interactive and key informational elements MUST include a `data-testid` attribute in kebab-case (e.g., `data-testid='login-button'`, `data-testid='room-code-input'`)."
+  },
+  "instructions_to_main_agent": "Ensure tailwind is configured correctly for colors. Install fonts: Cabinet Grotesk (headings), Outfit (body), JetBrains Mono (mono). Use standard HTML/Tailwind for Landing/Lobby to allow asymmetrical bento grids. Use customized Shadcn for the Game Room inputs, Admin Dashboard tables, and Modals. Incorporate the generated background images using Next.js/React standard img/div tags with appropriate classNames. Ensure the app uses responsive layouts, prioritizing mobile-first rendering for the Game Room grid."
+}
