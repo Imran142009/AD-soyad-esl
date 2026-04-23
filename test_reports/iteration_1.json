@@ -1,0 +1,49 @@
+{
+  "summary": "Backend testing for 'Ad, Soyad, Şəhər' multiplayer game complete. 26/26 pytest cases pass covering categories, auth, leaderboard, rooms, profile, admin (users/ban/mute/words CRUD), logout and full WebSocket game flow (2 simulated players: create → join → settings → chat → start_round → submit_word → stop → finalize → scoring → game_end → persistence). Scoring rules validated: +10 unique, +5 shared, 0 when word does not start with the round letter. All REST endpoints behave as expected. Found one reconnection-resiliency issue (rooms destroyed instantly when last player disconnects).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "WebSocket /api/ws/{code}",
+        "issue": "Solo-player rooms are dropped immediately when the only connected player disconnects (GameManager.leave pops the room from self.rooms when room.players is empty). This breaks reconnection: a lone host who briefly drops internet cannot rejoin the same code. Code comment says 'Cleanup empty room after delay' but no delay is implemented. Suggest grace period (e.g. 30-60s) or only cleanup via a scheduled task. Verified via test_ws_solo_reconnect_room_destroyed_bug - GET /api/rooms/{code} returns 404 immediately after solo disconnect."
+      },
+      {
+        "endpoint": "POST /api/auth/session",
+        "issue": "Cookie is set with secure=True, samesite='none' which is correct for cross-site but requires HTTPS. Fine for prod ingress; call out that local HTTP dev won't persist the cookie. Not a bug, just context."
+      }
+    ]
+  },
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/conftest.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix WebSocket reconnection: introduce a grace period (e.g., asyncio.create_task with ~30s sleep) before deleting empty rooms in game.py GameManager.leave(), OR keep rooms alive for N minutes with a background cleaner. This enables real-world reconnect when a host's browser briefly disconnects."
+  ],
+  "critical_code_review_comments": [
+    "game.py leave(): room is popped immediately when empty (`self.rooms.pop(room.code, None)`), contradicting the inline comment 'Cleanup empty room after delay'. No TTL/grace. Breaks reconnection for solo hosts.",
+    "server.py auth_session(): when a previously-created user logs in and first_user logic no longer triggers, existing user's is_admin is only set when in ADMIN_EMAILS. OK, but first_user branch only runs on insert; if the very first user was created via seed/ban-testing helper scripts that set is_admin=false, no subsequent login will auto-promote them to admin without ADMIN_EMAILS.",
+    "game.py _calculate_scores(): majority calculation `approvals * 2 >= len(votes_for_item)` accepts ties as valid. Reasonable default but should be documented.",
+    "game.py _calculate_scores(): when 'votes_for_item' exists but is below quorum (`len < (total_voters+1)//2`), falls back to trusting starts-with-letter while silently discarding the votes that were cast. Consider treating partial votes as weight (e.g., use the cast votes alone) or clearly documenting.",
+    "server.py /api/leaderboard groupBy uses $last on name/picture which depends on pipeline ordering; could return stale name/picture. Consider $first after sorting by ended_at desc.",
+    "In-memory game state (GameManager.rooms) is not persisted - a backend restart drops all active rooms. For production, consider Redis for rooms so the service can scale horizontally and survive restarts.",
+    "server.py WebSocket: no ping/pong heartbeat enforced by server; only client-initiated 'ping' type is handled. Relying on client to keep connection alive. Consider FastAPI ws heartbeat or application-level periodic ping from server.",
+    "server.py: POST /api/rooms does not indicate host join - the client must also open WS for host to appear in room.players. Works, but slightly asymmetric with create/join flow expectations.",
+    "admin_ban deletes sessions but admin_mute does not broadcast the mute change to any live WebSocket - the muted player continues to chat until next message is attempted. Acceptable since mute is checked per-message, but consider broadcasting a state update.",
+    "startup() creates unique indexes on users.email - if seed script or test inserts two docs with same email pre-index, startup will log a warning but continue. Indexes run inside try/except which is good.",
+    "auth_session(): when existing user logs in, we insert a NEW user_sessions row each time without cleaning up old ones for the same user; sessions can accumulate. Consider upserting or capping session count per user."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py",
+    "/app/backend/tests/conftest.py"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "N/A (not in scope)"},
+  "test_credentials": "Pre-seeded in MongoDB test_database as per /app/memory/test_credentials.md: admin token=TEST_tok_admin (user_id=test-admin), player tokens=TEST_tok_p1 (test-player1), TEST_tok_p2 (test-player2). All three have is_banned=false; admin has is_admin=true.",
+  "seed_data_creation": "Seeded 3 users + 3 sessions directly in MongoDB. TEST_ prefix used for emails and tokens. Tests are idempotent - admin words CRUD cleans up after itself; ban/mute cycle restores state and re-seeds player2 session after ban deletes it.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Seed users/sessions are in Mongo (run the mongosh block from /app/memory/test_credentials.md or the one at the top of this conversation if missing). Use Authorization: Bearer <token> for REST, and ?token=<token> query for WebSocket at wss://<BASE>/api/ws/{code}. Full WS flow, scoring, and persistence are verified. One minor reconnection-resiliency bug is flagged; tests document current behavior. Matches get persisted to db.matches with scores and rank, then user stats incremented. Leaderboard aggregates over matches.",
+  "rca of the issue": "Reconnection bug: game.py GameManager.leave() pops empty rooms immediately. Reproduction: create room, connect single player via WS, disconnect, GET /api/rooms/{code} -> 404 and subsequent WS re-open -> 'room_not_found'. Mitigation: schedule an asyncio task that waits N seconds then checks `if not room.players` before deleting; or use a lazy cleaner that runs periodically."
+}
