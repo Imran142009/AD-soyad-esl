@@ -168,8 +168,14 @@ class GameManager:
                 room.players[new_host_id].is_host = True
             await self.broadcast(room, {"type": "state", "room": room.to_state()})
             if not room.players:
-                # Cleanup empty room after delay
-                self.rooms.pop(room.code, None)
+                # Grace period for reconnection (60s)
+                asyncio.create_task(self._cleanup_empty_room(room.code))
+
+    async def _cleanup_empty_room(self, code: str, delay: int = 60):
+        await asyncio.sleep(delay)
+        room = self.rooms.get(code)
+        if room and not room.players:
+            self.rooms.pop(code, None)
 
     async def update_settings(self, room: Room, user_id: str, *, timer_seconds=None, total_rounds=None, categories=None):
         if user_id != room.host_id:
